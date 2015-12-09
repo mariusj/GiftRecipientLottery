@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from django.http.response import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 
 from los.forms import WishForm
 from los.models import Wish, Choice
+from django.contrib.auth.models import User
+from random import randint, seed
 
 
+@login_required
 def index(request):
     wish_list = Wish.objects.all().filter(person=request.user)
     gift = None
@@ -24,6 +28,7 @@ def index(request):
     return render(request, 'los/index.html', context)
 
 
+@login_required
 def add_wish(request):
     if request.method == "POST":
         form = WishForm(request.POST)
@@ -35,11 +40,20 @@ def add_wish(request):
     return HttpResponseRedirect(reverse('index'))
 
 
+@login_required
 def draw(request):
     if request.method == "POST":
-        pass
+        exc = Choice.objects.all().values_list('receiver', flat=True)
+        pool = User.objects.exclude(id=request.user.id).exclude(id__in=exc)
+        seed()
+        idx = randint(0, len(pool) - 1)
+        drawn = pool[idx]
+        choice = Choice(buyer=request.user, receiver=drawn)
+        choice.save()
+        
     return HttpResponseRedirect(reverse('index'))
 
 
+@login_required
 def wish_remove(request):
     return HttpResponseRedirect(reverse('index'))
