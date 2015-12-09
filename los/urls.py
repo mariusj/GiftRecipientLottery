@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^add_wish$', views.add_wish, name='add_wish'),
     url(r'^draw$', views.draw, name='draw'),
+    url(r'^wish_remove$', views.wish_remove, name='wish_remove'),
 ]

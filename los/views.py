@@ -39,3 +39,7 @@ def draw(request):
     if request.method == "POST":
         pass
     return HttpResponseRedirect(reverse('index'))
+
+
+def wish_remove(request):
+    return HttpResponseRedirect(reverse('index'))
