@@ -55,5 +55,6 @@ def draw(request):
 
 
 @login_required
-def wish_remove(request):
+def wish_remove(request, wish_id):
+    Wish.objects.filter(id=wish_id).filter(person=request.user).delete()
     return HttpResponseRedirect(reverse('index'))
