@@ -43,11 +43,20 @@ def add_wish(request):
 @login_required
 def draw(request):
     if request.method == "POST":
-        exc = Choice.objects.all().values_list('receiver', flat=True)
-        pool = User.objects.exclude(id=request.user.id).exclude(id__in=exc)
+        # a pool of all users (except current user and root)
+        pool = User.objects.exclude(id=request.user.id).exclude(username='root')
+        # exclude already selected users
+        exc = Choice.objects.all().values_list('receiver', flat=True)        
+        pool = pool.exclude(id__in=exc)
+        # exclude user that has current user as a choice
+        exc2 = Choice.objects.filter(receiver=request.user).values_list('buyer', flat=True)
+        if exc2:
+            pool = pool.exclude(id=exc2[0])
+        # select random user
         seed()
         idx = randint(0, len(pool) - 1)
         drawn = pool[idx]
+        # save the choice
         choice = Choice(buyer=request.user, receiver=drawn)
         choice.save()
         
