@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="pull-right">
-	<a href="{% url 'logout' %}?next=/">Wyloguj się</a>
+	<a href="{% url 'logout' %}?next=/"><i class="fa fa-sign-out"></i> Wyloguj się</a>
 </div>
 
 <h1>Hello {{ user }}</h1>
@@ -47,7 +47,7 @@
 						<li>{{ w.name }}</li> 
 					{% endfor %}
 				</ul> 
-			{% else $}
+			{% else %}
 				<p>Ta osoba jeszcze nic nie wybrała. Spróbuj później.</p>
 			{% endif %}
 		</div>
