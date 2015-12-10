@@ -1,34 +1,37 @@
+{% extends "base.html" %}
 
 {% block content %}
 
+<h1>Logowanie do systemu Losowanie</h1>
+
 {% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
+<p>Nieprawidłowy login lub hasło. Spróbuj ponownie.</p>
 {% endif %}
 
 {% if next %}
     {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
+    <p>Nie masz uprawnień do oglądania tej strony.
+    Zaloguj się z uprawnienami innego użytkownika.</p>
     {% endif %}
 {% endif %}
 
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
+<form method="post" action="{% url 'login' %}" class="form-horizontal">
+	{% csrf_token %}
+	<div class="form-group">
+		 <label for="username" class="col-sm-2 control-label">Login</label>
+		<div class="col-sm-10">
+      		<input type="text" class="form-control" id="username" name="username" />
+    	</div>		 
+	</div>
+	<div class="form-group">
+		 <label for="password" class="col-sm-2 control-label">Hasło</label>
+		<div class="col-sm-10">
+      		<input type="password" class="form-control" id="password" name="password" />
+    	</div>		 
+	</div>
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
+	<input type="submit" value="Zaloguj się" class="btn btn-primary" />
+	<input type="hidden" name="next" value="{{ next }}" />
 </form>
 
 {% endblock %}
