@@ -2,6 +2,10 @@
 
 {% block content %}
 
+<div class="pull-right">
+	<a href="{% url 'logout' %}?next=/">Wyloguj się</a>
+</div>
+
 <h1>Hello {{ user }}</h1>
 
 <div class="panel panel-default">
@@ -36,14 +40,16 @@
 				Osoba której kupisz prezent to: 
 				<strong>{{ gift.receiver }}</strong>
 			</p>
-			<p>
-				Lista życzeń:
-				<ul>						
+			<p>Lista życzeń:</p>							
+			{% if other_wish %}
+				<ul>
 					{% for w in other_wish %}
 						<li>{{ w.name }}</li> 
 					{% endfor %}
 				</ul> 
-			</p>				
+			{% else $}
+				<p>Ta osoba jeszcze nic nie wybrała. Spróbuj później.</p>
+			{% endif %}
 		</div>
 	</div> 
 {% else %}
