@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/global.css';
+---
+
+<Layout title="Prezenty">
+	<main>
+		<h1 class="title">Prezenty</h1>
+		<form method="POST" action="/api/login" enctype="multipart/form-data">
+			<div class="field is-horizontal">
+				<div class="field-label is-normal">
+					<label for="email" class="label">Email:</label>
+				</div>
+				<div class="field-body">
+					<div class="field is-expanded">					
+						<div class="control">
+							<input type="email" name="email" id="email" class="input">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="field is-horizontal">
+				<div class="field-label">
+				<!-- Left empty for spacing -->
+				</div>
+				<div class="field-body">
+				<div class="field">
+					<div class="control">
+						<button type="submit" class="button is-link">Zaloguj się</button>
+					</div>
+				</div>
+				</div>		
+			</div>
+		</form>
+    </main>
+</Layout>

@@ -1,0 +1,148 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/global.css';
+import { getCurrentUser, getUsers } from '../api/users';
+import { getInstructions } from '../api/instr';
+
+
+const user = await getCurrentUser(Astro.cookies);
+
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+if (!user.isAdmin) {
+	Astro.redirect('/index');
+}
+
+const instructions = await getInstructions();
+const users = await getUsers();
+
+function makeDelLink(id: number) {
+    return "removeUser(" + id + ")"
+}
+
+---
+
+<Layout title="Administracja">
+    <main>
+		<h1 class="title">Administracja</h1>
+        <div class="panel">
+            <div class="panel-block">
+                <form method="POST" action="/api/admin" enctype="multipart/form-data">
+                    <div class="field">
+                        <label class="label" for="instr">Instrukcja</label>
+                        <div class="control">
+                            <textarea id="instr" rows="10" cols="40" name="instructions" class="textarea">{instructions}</textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="button is-success">Zapisz</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel">
+            <p class="panel-heading">Lista użytkowników</p>
+            <table class="table is-striped is-hoverable">
+                <tbody>
+                    {users.map((user) => (
+                        <tr data-id={user.id}>
+                            <td>{user.userName}</td>
+                            <td>{user.email}</td>
+                            <td><button onclick={makeDelLink(user.id)} class="button is-danger is-small">Usuń</button></td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel">
+            <p class="panel-heading">Dodawanie użytkownika</p>
+            <div class="panel-block panel-block-block">
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label for="userName" class="label">Imię i nazwisko:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input id="userName" class="input" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label for="email" class="label">e-mail:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input id="email" class="input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label">
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <div class="control">
+                            <button onclick="addUser()" class="button is-primary">Dodaj</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="panel">
+            <div class="panel-block">
+                <button onclick="draw()" class="button is-warning">Losuj</button>
+            </div>
+        </div>
+    </main>    
+</Layout>
+
+<script is:inline>
+    async function removeUser(id) {
+        await fetch("/api/users/" + id, {
+            method: 'DELETE',
+        });
+        location.reload();
+    }
+
+    async function addUser() {
+        await fetch(`/api/users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'userName': document.getElementById('userName').value,
+                'email': document.getElementById('email').value,
+            }),
+        });
+        location.reload();
+    }
+
+    async function draw() {
+        let resp = await fetch(`/api/draw`, {
+            method: 'POST'
+        });
+        console.dir(resp);
+    }
+
+</script>
+
+<style>
+    .panel-block-block {
+        display: block;
+    }
+</style>

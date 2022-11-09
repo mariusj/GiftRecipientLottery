@@ -1,0 +1,20 @@
+{
+  "name": "@example/basics",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^2.0.2",
+    "@aws-sdk/client-dynamodb": "^3.202.0",
+    "@aws-sdk/lib-dynamodb": "^3.202.0",
+    "astro": "^1.6.0",
+    "bulma": "^0.9.4"
+  }
+}

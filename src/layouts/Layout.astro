@@ -1,0 +1,32 @@
+---
+import "bulma/css/bulma.css"
+
+export interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{title}</title>
+	</head>
+	<body>
+		<section class="section">
+			<div class="container">
+				<slot />
+			</div>
+		</section>
+	</body>
+</html>
+<style is:global>
+	html {
+		font-family: system-ui, sans-serif;
+		background-color: #F6F6F6;
+	}
+</style>

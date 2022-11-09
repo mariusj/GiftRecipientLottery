@@ -1,0 +1,17 @@
+html {
+    background-color: #f1f5f9;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+textarea {
+    resize: none;
+}
+
+.title {
+    text-align: center;
+}
