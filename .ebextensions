@@ -1,4 +1,4 @@
 option_settings:
   aws:elasticbeanstalk:container:nodejs:
-    NodeCommand: "npm start"
+    NodeCommand: "node ./dist/server/entry.mjs"
 
