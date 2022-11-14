@@ -1,5 +1,5 @@
 {
-  "name": "@example/basics",
+  "name": "@gifts/gifts",
   "type": "module",
   "version": "0.0.1",
   "private": true,
@@ -10,11 +10,14 @@
     "preview": "astro preview",
     "astro": "astro"
   },
+  "engines" : { 
+    "node" : ">=16.0.0 <17.0.0"
+  },  
   "dependencies": {
     "@astrojs/node": "^2.0.2",
     "@aws-sdk/client-dynamodb": "^3.202.0",
     "@aws-sdk/lib-dynamodb": "^3.202.0",
-    "astro": "^1.6.0",
+    "astro": "^1.6.7",
     "bulma": "^0.9.4"
   }
 }
