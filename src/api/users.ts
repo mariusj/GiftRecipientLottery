@@ -1,5 +1,5 @@
-import { GetCommand, PutCommand, DeleteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { ReplicaGlobalSecondaryIndexAutoScalingDescriptionFilterSensitiveLog, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { GetCommand, PutCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand } from "@aws-sdk/client-dynamodb";
 import { ddbDocClient } from "./ddbDocClient";
 import { ddbClient } from "./ddbClient";
 import { AstroCookies } from "astro/dist/core/cookies";
