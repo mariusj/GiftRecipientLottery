@@ -1,15 +1,17 @@
 import { GetCommand, PutCommand, DeleteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { ScanCommand } from "@aws-sdk/client-dynamodb";
+import { ReplicaGlobalSecondaryIndexAutoScalingDescriptionFilterSensitiveLog, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { ddbDocClient } from "./ddbDocClient";
 import { ddbClient } from "./ddbClient";
 import { AstroCookies } from "astro/dist/core/cookies";
+import { clearDrawnTable } from "./draw";
 
 
 export type User = {
     id: number,
     userName: string,
     email: string,
-    isAdmin?: boolean
+    isAdmin?: boolean,
+    pin?: string
 }
 
 
@@ -56,10 +58,30 @@ export async function getCurrentUser(cookies: AstroCookies): Promise<User> {
  * @param email 
  * @returns 
  */
-async function getUserByEmail(email: string): Promise<User> {
+async function getUserByEmail(email: string, pin: string): Promise<User> {
     console.log(`query for user ${email}`);
-    const users = await getUsers();
-    return users.find(u => u.email == email);
+    const params = {
+      FilterExpression: "email = :e AND pin = :p",
+      ExpressionAttributeValues: {
+        ":e": {S: email},
+        ":p": {S: pin}
+      },
+      ProjectionExpression: "id, userName, email",
+      TableName: "Users",
+    };
+    const data = await ddbClient.send(new ScanCommand(params));
+    if (data.Items && data.Items.length > 0) {
+      console.log("user found");
+      const u = data.Items[0];
+      return {
+        'id': parseInt(u.id.N), 
+        'userName': u.userName.S, 
+        'email': u.email.S
+      }
+    } else {
+      console.warn("user not found");
+    }
+    return null;
 }
 
 
@@ -81,23 +103,24 @@ export async function getUserById(id: number) {
 }
 
 
-
-
 /**
  * Try to log-in user.
  * @param email 
  * @returns 
  */
-export async function login(email: string): Promise<User> {
-    return await getUserByEmail(email);
+export async function login(email: string, pin: string): Promise<User> {
+    return await getUserByEmail(email, pin);
 }
 
-
+/**
+ * Get all users.
+ * @returns 
+ */
 export async function getUsers(): Promise<User[]> {
     console.log("list users");
     const params = {
       // Set the projection expression, which the the attributes that you want.
-      ProjectionExpression: "id, userName, email",
+      ProjectionExpression: "id, userName, email, pin",
       TableName: "Users",
     };
     const data = await ddbClient.send(new ScanCommand(params));
@@ -123,42 +146,52 @@ export async function getUsers(): Promise<User[]> {
       
       return 4294967296 * (2097151 & h2) + (h1 >>> 0);
   };
-  
-  
-  /**
-   * Saves a new user in a database.
-   * @param user 
-   * @returns 
-   */
-  export async function addUser(user: User) {
-    console.log(`creating user ${user.email}`);
-    const params = {
-          TableName: "Users",
-          Item: {
-            'id': cyrb53(user.userName + "#" + user.email),
-            'userName': user.userName,
-            'email': user.email
-          },
-        };
-        console.dir(params);
-        const data = await ddbDocClient.send(new PutCommand(params));
-        return data;      
+
+function generatePin(): string {
+  let pin = "";
+  for (let i=0; i<4; i++) {
+    pin += Math.floor(Math.random() * 10);
   }
+  return pin;
+}
   
   
-  /**
-   * Deletes an user.
-   * @param id 
-   */
-  export async function deleteUser(id: number) {
-    console.log(`deleting user ${id}`);
-    const params = {
-      TableName: "Users",
-      Key: {
-        "id": id
-      }
-    };
-    let data = await ddbDocClient.send(new DeleteCommand(params));
-  }
+/**
+ * Saves a new user in a database.
+ * @param user 
+ * @returns 
+ */
+export async function addUser(user: User) {
+  console.log(`creating user ${user.email}`);
+  const params = {
+    TableName: "Users",
+    Item: {
+      'id': cyrb53(user.userName + "#" + user.email),
+      'userName': user.userName,
+      'email': user.email,
+      'pin': generatePin()
+    },
+  };
+  console.dir(params);
+  const data = await ddbDocClient.send(new PutCommand(params));
+  await clearDrawnTable();
+  return data;      
+}
   
   
+/**
+ * Deletes an user.
+ * @param id 
+ */
+export async function deleteUser(id: number) {
+  console.log(`deleting user ${id}`);
+  const params = {
+    TableName: "Users",
+    Key: {
+      "id": id
+    }
+  };
+  let data = await ddbDocClient.send(new DeleteCommand(params));
+  await clearDrawnTable();
+  return data;
+}

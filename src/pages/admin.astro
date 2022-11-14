@@ -3,20 +3,23 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/global.css';
 import { getCurrentUser, getUsers } from '../api/users';
 import { getInstructions } from '../api/instr';
+import { getDrawnPerson } from '../api/draw';
 
 
 const user = await getCurrentUser(Astro.cookies);
 
 if (!user) {
-  return Astro.redirect('/login');
+    return Astro.redirect('/login');
 }
 
 if (!user.isAdmin) {
-	Astro.redirect('/index');
+    return Astro.redirect('/index');
 }
 
 const instructions = await getInstructions();
 const users = await getUsers();
+
+const drawnPerson = await getDrawnPerson(user);
 
 function makeDelLink(id: number) {
     return "removeUser(" + id + ")"
@@ -38,6 +41,13 @@ function makeDelLink(id: number) {
                     </div>
                     <button type="submit" class="button is-success">Zapisz</button>
                 </form>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-block">
+                { drawnPerson ? <h2>Wylosowałeś {drawnPerson}</h2> : <h2>Jeszcze nie nastąpiło losowanie</h2>}
+                <button onclick="draw()" class="button is-warning">Losuj</button>
             </div>
         </div>
 
@@ -101,12 +111,6 @@ function makeDelLink(id: number) {
             </div>
         </div>
 
-
-        <div class="panel">
-            <div class="panel-block">
-                <button onclick="draw()" class="button is-warning">Losuj</button>
-            </div>
-        </div>
     </main>    
 </Layout>
 

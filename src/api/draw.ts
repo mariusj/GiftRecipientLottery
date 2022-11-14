@@ -16,7 +16,7 @@ type DrawInfo = {
  * Clears a table with drawn info.
  * @returns 
  */
- async function clearDrawnTable() {
+ export async function clearDrawnTable() {
     console.log("clearing drawn table");
     const params = {
       // Set the projection expression, which the the attributes that you want.

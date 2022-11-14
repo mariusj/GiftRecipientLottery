@@ -3,7 +3,8 @@ import { login } from "../../api/users";
 export async function post({ params, request }) {
     const data = await request.formData();
     const email = data.get("email") as string;
-    const user = await login(email);
+    const pin = data.get("pin") as string;
+    const user = await login(email, pin);
     if (user) {
         return new Response("ok", {
             headers: { 
