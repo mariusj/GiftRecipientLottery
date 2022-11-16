@@ -21,9 +21,7 @@ const drawnPerson = await getDrawnPerson(user);
 <Layout title="Prezenty">
 	<main>
 		<h1 class="title">Prezenty</h1>
-		<p class="instructions">
-			{instructions}
-		</p>
+		<textarea class="instructions" cols="100" rows="8" readonly>{instructions}</textarea>
 
 		<div class="panel">
 			<div class="panel-block">
@@ -47,5 +45,9 @@ const drawnPerson = await getDrawnPerson(user);
 	}
 	.instructions strong {
 		color: rgb(var(--accent));
+	}
+
+	.panel {
+		background-color: #FFF;
 	}
 </style>
