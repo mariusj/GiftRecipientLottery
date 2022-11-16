@@ -128,6 +128,7 @@ export async function getUsers(): Promise<User[]> {
       const user = { 'id': parseInt(u.id.N), 'userName': u.userName.S, 'email': u.email.S } as User;
       return user;
     });
+    users.sort((a, b) => a.userName.localeCompare(b.userName));
     return users;
   }
   
